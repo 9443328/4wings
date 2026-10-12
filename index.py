@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message, Update
 
-# Инициализация бота
+# Инициализируем бота
 TOKEN = os.getenv("BOT_TOKEN", "8807378632:AAHHbPcfAjtjUy1K9ImLb0zEu5mKh6PoC-8")
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -20,7 +20,7 @@ async def cmd_start(message: Message):
 async def any_text(message: Message):
     await message.answer(MY_TEXT)
 
-# Точка входа ASGI, которую требует Vercel для асинхронного Python
+# Точка входа ASGI, которую Vercel гарантированно распознает
 async def app(scope, receive, send):
     if scope['type'] != 'http':
         return
@@ -35,12 +35,12 @@ async def app(scope, receive, send):
             more_body = message.get('more_body', False)
 
         try:
-            # Скармливаем данные в aiogram
+            # Читаем JSON и скармливаем в aiogram
             json_data = json.loads(body.decode('utf-8'))
             update = Update.model_validate(json_data, context={"bot": bot})
             await dp.feed_update(bot, update)
             
-            # Отвечаем серверу Telegram, что всё ок
+            # Отвечаем серверу Telegram, что всё прошло успешно
             await send({
                 'type': 'http.response.start',
                 'status': 200,
@@ -62,7 +62,7 @@ async def app(scope, receive, send):
                 'body': f"Error: {e}".encode('utf-8'),
             })
             
-    # Простой ответ для обычного захода через браузер (GET)
+    # Ответ для обычного перехода через браузер (GET)
     elif scope['method'] == 'GET':
         await send({
             'type': 'http.response.start',
